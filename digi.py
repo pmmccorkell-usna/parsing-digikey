@@ -11,9 +11,8 @@
 
 from bs4 import BeautifulSoup
 import requests
-from json import loads,dumps
 
-from config import *
+from config import *		# includes "event_name" from IFTTT applet name, and product webpage from Digikey.
 try:
 	from secrets import *
 	run_main = 1
@@ -88,22 +87,22 @@ def send_ifttt(stock_data):
 	print(report)
 	if report:
 		requests.post(iftt_website,data=report)
-		print("sent: " + dumps(report))
+		print("sent: " + str(report))
 	else:
-		print("no report.")
+		print("No report to send.")
 
 def check_stock(data):
 	in_stock = 0
 	stock = {}
 
-	for k in data:
-		if (data[k]['quantity']):
-			stock[k] = data[k]
-	print(stock)
-	if stock:
-		# print("in stock: " + dumps(stock))
-		for k in stock:
-			send_ifttt(stock[k])
+	if (data):
+		for k in data:
+			if (data[k]['quantity']):
+				stock[k] = data[k]
+		print(stock)
+		if stock:
+			for k in stock:
+				send_ifttt(stock[k])
 
 def main():
 	global digikey_website
