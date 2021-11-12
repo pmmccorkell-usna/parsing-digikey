@@ -11,6 +11,7 @@
 
 from bs4 import BeautifulSoup
 import requests
+from time import sleep
 
 from config import *		# includes "event_name" from IFTTT applet name, and product webpage from Digikey.
 try:
@@ -25,24 +26,28 @@ except:
 iftt_website = 'https://maker.ifttt.com/trigger/'+event_name+'/with/key/'+ maker_key
 
 def connect_website(website):
-	html = requests.get(website)
-	html_parser = BeautifulSoup(html.text,'html.parser')
+	failed=1
+	while(failed):
+		html = requests.get(website)
+		html_parser = BeautifulSoup(html.text,'html.parser')
 
-	check_rejected = html_parser.head.title.getText('title')
+		check_rejected = html_parser.head.title.getText('title')
 
-	print('')
-	if (check_rejected == 'Request Rejected'):
-		print('check_rejected')
-		print('The internet is not playing nice. Try again ?')
-		return 0
-	else:
-		return html_parser
+		print('')
+		if (check_rejected == 'Request Rejected'):
+			print('check_rejected')
+			print('The internet is not playing nice. Try again ?')
+			sleep(10)
+			# return 0
+		else:
+			failed=0
+	return html_parser
 
 
-products = {}
 
 def scrape_website(target_website):
 	connection = connect_website(target_website)
+	products = {}
 
 	if (connection):
 
@@ -73,11 +78,11 @@ def scrape_website(target_website):
 				'name':product_name
 			}
 
-
 		# Do things with the dictionary of product information.
 		for product in products:
 			print(products[product]['name'] + ': ' + str(products[product]['quantity']))
 		return products
+
 
 def send_ifttt(stock_data):
 	report = {}
@@ -90,6 +95,7 @@ def send_ifttt(stock_data):
 		print("sent: " + str(report))
 	else:
 		print("No report to send.")
+
 
 def check_stock(data):
 	in_stock = 0
@@ -105,8 +111,9 @@ def check_stock(data):
 				send_ifttt(stock[k])
 
 def main():
-	global digikey_website
+	global digikey_website	# from config.py
 	check_stock(scrape_website(digikey_website))
 
+# Ensure API secrets.py exists, then run main().
 if (run_main):
 	main()
