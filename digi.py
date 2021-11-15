@@ -27,6 +27,7 @@ iftt_website = 'https://maker.ifttt.com/trigger/'+event_name+'/with/key/'+ maker
 
 def connect_website(website):
 	failed=1
+
 	while(failed):
 		html = requests.get(website)
 		html_parser = BeautifulSoup(html.text,'html.parser')
@@ -38,10 +39,17 @@ def connect_website(website):
 			print('check_rejected')
 			print('The internet is not playing nice. Try again ?')
 			sleep(10)
-			# return 0
 		else:
+			print("Oh happy days. Success!")
 			failed=0
 	return html_parser
+
+
+
+# i = html.text.find("In Stock")
+# qty_str = html.text[i-10:i-1]
+# search_num = re.search(r"\d", qty_str)
+# qty = int(qty_str[search_num.start():search_num.end()])
 
 
 
