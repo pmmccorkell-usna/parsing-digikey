@@ -44,8 +44,9 @@ def connect_website(website):
 			failed=0
 	return html_parser
 
-
-
+#
+# Develop this for individual product pages instead of product series currently used
+#
 # i = html.text.find("In Stock")
 # qty_str = html.text[i-10:i-1]
 # search_num = re.search(r"\d", qty_str)
